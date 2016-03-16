@@ -38,6 +38,11 @@ export default class Store {
         .setState(this.reducer.destroyTodo(this._state, action))
         .subscriber(this._state);
       break;
+    case 'CLEAR_COMPLETED_TODOS':
+      this
+        .setState(this.reducer.clearCompletedTodos(this._state, action))
+        .subscriber(this._state);
+      break;
     default:
     }
   }

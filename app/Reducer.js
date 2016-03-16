@@ -20,18 +20,20 @@ export default class Reducer {
     let completedTotal = 0;
     let state = {...prevState,
       todos: prevState.todos.map((todo) => {
-        const matchedTodo = newState.id === todo.id;
-        completedTotal = todo.completed || matchedTodo ? completedTotal + 1 : completedTotal;
         return {...todo,
-          completed: matchedTodo ? !todo.completed : todo.completed
+          completed: newState.id === todo.id ? !todo.completed : todo.completed
         };
       })
     };
-    if (completedTotal === state.todos.length) {
-      state  = {...state, toggleAll: true };
-    } else {
-      state  = {...state, toggleAll: false };
-    }
+
+    state.todos.forEach((todo) => {
+      if (todo.completed) {
+        completedTotal++;
+      }
+    });
+
+    state  = {...state, toggleAll: completedTotal === state.todos.length ? true : false };
+
     return state;
   }
   editTodo(prevState, newState) {
@@ -59,6 +61,19 @@ export default class Reducer {
 
     prevState.todos.forEach((todo) => {
       if (newState.id !== todo.id) {
+        todos.push({...todo});
+      }
+    });
+    return {...prevState,
+      toggleAll: false,
+      todos: todos
+    };
+  }
+  clearCompletedTodos(prevState) {
+    const todos = [];
+
+    prevState.todos.forEach((todo) => {
+      if (!todo.completed) {
         todos.push({...todo});
       }
     });

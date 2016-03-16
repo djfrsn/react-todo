@@ -5,6 +5,11 @@ import styles from './Footer.css';
 const cx = classNames.bind(styles);
 
 export default class Footer extends Component {
+  onClearCompleted = () => {
+    this.props.dispatch({
+      type: 'CLEAR_COMPLETED_TODOS'
+    });
+  }
   render() {
     const todosLength = this.props.todos.length;
     const footerClass = cx({
@@ -29,10 +34,11 @@ export default class Footer extends Component {
             <a href="#/completed">Completed</a>
           </li>
         </ul>
-        <button className={clearCompletedClass}>Clear completed</button>
+        <button className={clearCompletedClass} onClick={this.onClearCompleted}>Clear completed</button>
       </footer>);
   }
 }
 Footer.propTypes = {
-  todos: PropTypes.array
+  todos: PropTypes.array,
+  dispatch: PropTypes.func.isRequired
 };
