@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames/bind';
 import TodoItem from 'TodoItem';
 import styles from './TodoContainer.css';
-// import our base child components
+
 const cx = classNames.bind(styles);
 
 export default class TodoContainer extends Component {

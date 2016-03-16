@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Store from './Store';
+import utils from 'utils';
 import Header from 'Header';
 import TodoContainer from 'TodoContainer';
 import Footer from 'Footer';
@@ -11,10 +12,15 @@ const cx = classNames.bind(styles);
 export default class TodoApp extends Component {
   constructor() {
     super();
-    this.store = new Store(this.refresh.bind(this));
+    let localData = utils.store('TodoAppState') || { todos: [] };
+    if (localData.length === 0) {
+      localData = { todos: [] };
+    }
+    this.store = new Store(this.refresh.bind(this), localData);
     this.state = this.store.getState();
   }
   refresh = (state) => {
+    utils.store('TodoAppState', state);
     this.setState(state);
   }
   dispatch = (action) => {

@@ -11,27 +11,35 @@ export default class Footer extends Component {
     });
   }
   render() {
+    let todosCompleted = 0;
+    this.props.todos.forEach((todo) => {
+      if (todo.completed) {
+        todosCompleted++;
+      }
+    });
+
+    const clearCompletedClass = cx({
+      'clear-completed': true,
+      'hidden': todosCompleted > 0 ? false : true
+    });
+
     const todosLength = this.props.todos.length;
+    const theLetterS = todosLength > 1 ? 's' : '';
     const footerClass = cx({
       'footer': true,
       'hidden': todosLength > 0 ? false : true
     });
-    // TODO: check for completed todos or not on whether to hide or show here
-    const clearCompletedClass = cx({
-      'clear-completed': true,
-      'hidden': todosLength > 0 ? false : true
-    });
     return (<footer className={footerClass}>
-        <span className={cx('todo-count')}><strong>{todosLength}</strong> item left</span>
+        <span className={cx('todo-count')}><strong>{todosLength}</strong> item{theLetterS} left</span>
         <ul className={cx('filters')}>
           <li>
-            <a className={cx('selected')} href="#/">All</a>
+            <a className={cx('selected')} href="/">All</a>
           </li>
           <li>
-            <a href="#/active">Active</a>
+            <a href="/active">Active</a>
           </li>
           <li>
-            <a href="#/completed">Completed</a>
+            <a href="/completed">Completed</a>
           </li>
         </ul>
         <button className={clearCompletedClass} onClick={this.onClearCompleted}>Clear completed</button>
