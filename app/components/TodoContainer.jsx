@@ -14,13 +14,13 @@ export default class TodoContainer extends Component {
         'completed': data.completed,
         'destroy': data.destroy
       });
-      return (<li className={liClass}>
+      return (<li key={data.id} className={liClass}>
           <div className={cx('view')}>
             <input className={cx('toggle')} type="checkbox" checked={data.checked} />
             <label>{data.text}</label>
             <button className={cx('destroy')}></button>
           </div>
-          <input className={cx('edit')} value="Create a TodoMVC template" />
+          <input className={cx('edit')} defaultValue="Create a TodoMVC template" />
         </li>);
     });
     return (<section className={cx('main')}>
@@ -34,8 +34,9 @@ export default class TodoContainer extends Component {
 }
 
 TodoContainer.propTypes = {
+  visibilityFilter: PropTypes.string,
   todos: PropTypes.arrayOf(PropTypes.shape({
     checked: PropTypes.bool,
-    text: PropTypes.string.isRequried
+    text: PropTypes.string
   }))
 };
