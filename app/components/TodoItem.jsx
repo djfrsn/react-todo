@@ -11,7 +11,7 @@ const ESCAPE_KEY = 27;
 export default class TodoItem extends Component {
   componentDidUpdate(prevProps) {
     if (!prevProps.editing && this.props.editing) {
-      var node = ReactDOM.findDOMNode(this.refs.editField);
+      const node = ReactDOM.findDOMNode(this.refs.editField);
       node.focus();
       node.setSelectionRange(node.value.length, node.value.length);
     }
@@ -68,7 +68,9 @@ export default class TodoItem extends Component {
 }
 
 TodoItem.propTypes = {
+  id: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
+  completed: PropTypes.bool.isRequired,
   checked: PropTypes.bool,
   editing: PropTypes.bool,
   text: PropTypes.string
