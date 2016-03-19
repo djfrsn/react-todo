@@ -16,7 +16,7 @@ export default class TodoApp extends Component {
   constructor() {
     super();
     let localData = utils.store('TodoAppState') || { todos: [] };
-    this.fireData = new Firebase('https://djfrsn-react-todo.firebaseio.com/');
+    this.fireData = new Firebase('https://djfrsn-react-todo.firebaseio.com/state');
     this.fireData.on('value', (snapshot) => {
       this.setState(snapshot.val()); // sync with db data
     });
