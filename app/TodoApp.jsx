@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Firebase from 'firebase';
 import Store from './Store';
 import utils from 'utils';
@@ -11,20 +11,29 @@ import styles from './TodoApp.css';
 
 const cx = classNames.bind(styles);
 
-
 export default class TodoApp extends Component {
-  constructor() {
-    super();
-    let localData = utils.store('TodoAppState') || { todos: [] };
+  constructor(props) {
+    super(props);
+    let localData = utils.store('TodoAppState');
     this.fireData = new Firebase('https://djfrsn-react-todo.firebaseio.com/state');
     this.fireData.on('value', (snapshot) => {
       this.setState(snapshot.val()); // sync with db data
     });
     if (localData.length === 0) {
-      localData = { todos: [] };
+      localData = { todos: [], activeVisibilityFilter: 'all' };
     }
     this.store = new Store(this.refresh.bind(this), localData); // local storage first
     this.state = this.store.getState();
+    const routes = ['active', 'completed'];
+    const childRoute = props.location.pathname.split('/')[1];
+    if (routes.indexOf(childRoute) >= 0) {
+      this.childRoute = childRoute;
+    }
+  }
+  componentWillMount() {
+    if (this.childRoute) {
+      this.store.dispatch({ type: 'VISIBILITY_FILTER', filter: this.childRoute, browserStatePush: false });
+    }
   }
   refresh = (state) => {
     utils.store('TodoAppState', state);
@@ -45,3 +54,9 @@ export default class TodoApp extends Component {
       </div>);
   }
 }
+
+TodoApp.propTypes = {
+  location: PropTypes.shape({
+    pathname: PropTypes.string.isRequired
+  })
+};

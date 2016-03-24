@@ -1,7 +1,7 @@
 import Reducer from 'Reducer';
 
 export default class Store {
-  constructor(subscriber, initialState = { toggleAll: false, todos: [] }) {
+  constructor(subscriber, initialState = { toggleAll: false, todos: [], activeVisibilityFilter: 'all' }) {
     this.reducer = new Reducer();
     this.subscriber = subscriber;
     this._state = initialState;
@@ -41,6 +41,11 @@ export default class Store {
     case 'CLEAR_COMPLETED_TODOS':
       this
         .setState(this.reducer.clearCompletedTodos(this._state, action))
+        .subscriber(this._state);
+      break;
+    case 'VISIBILITY_FILTER':
+      this
+        .setState(this.reducer.visibilityFilter(this._state, action))
         .subscriber(this._state);
       break;
     default:

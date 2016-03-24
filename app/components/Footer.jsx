@@ -10,6 +10,10 @@ export default class Footer extends Component {
       type: 'CLEAR_COMPLETED_TODOS'
     });
   }
+  onVisibilityChange = (e) => {
+    e.preventDefault();
+    this.props.dispatch({ type: 'VISIBILITY_FILTER', filter: e.currentTarget.dataset.visibilityfilter });
+  }
   render() {
     let todosCompleted = 0;
     this.props.todos.forEach((todo) => {
@@ -33,13 +37,13 @@ export default class Footer extends Component {
         <span className={cx('todo-count')}><strong>{todosLength}</strong> item{theLetterS} left</span>
         <ul className={cx('filters')}>
           <li>
-            <a className={cx('selected')} href="/">All</a>
+            <a className={cx({'selected': this.props.activeVisibilityFilter === 'all'})} href="/" data-visibilityfilter="all" onClick={this.onVisibilityChange}>All</a>
           </li>
           <li>
-            <a href="/active">Active</a>
+            <a href="/active" className={cx({'selected': this.props.activeVisibilityFilter === 'active'})} data-visibilityfilter="active" onClick={this.onVisibilityChange}>Active</a>
           </li>
           <li>
-            <a href="/completed">Completed</a>
+            <a href="/completed" className={cx({'selected': this.props.activeVisibilityFilter === 'completed'})} data-visibilityfilter="completed" onClick={this.onVisibilityChange}>Completed</a>
           </li>
         </ul>
         <button className={clearCompletedClass} onClick={this.onClearCompleted}>Clear completed</button>
@@ -47,6 +51,7 @@ export default class Footer extends Component {
   }
 }
 Footer.propTypes = {
+  activeVisibilityFilter: PropTypes.string.isRequired,
   todos: PropTypes.array,
   dispatch: PropTypes.func.isRequired
 };

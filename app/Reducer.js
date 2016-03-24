@@ -1,27 +1,30 @@
 import utils from 'utils';
+import { browserHistory } from 'react-router';
 
 const defaultTodo = {
   id: '',
   text: '',
-  completed: false
+  completed: false,
+  visible: true
 };
 
 export default class Reducer {
-  newTodo(prevState, newState) {
+  newTodo(prevState, nextState) {
     return {...prevState,
       toggleAll: false,
       todos: prevState.todos.concat({...defaultTodo,
         id: utils.uuid(),
-        text: newState.text
+        text: nextState.text,
+        visible: prevState.activeVisibilityFilter !== 'completed'
       })
     };
   }
-  markTodoAsCompleted(prevState, newState) {
+  markTodoAsCompleted(prevState, nextState) {
     let completedTotal = 0;
     let state = {...prevState,
       todos: prevState.todos.map((todo) => {
         return {...todo,
-          completed: newState.id === todo.id ? !todo.completed : todo.completed
+          completed: nextState.id === todo.id ? !todo.completed : todo.completed
         };
       })
     };
@@ -36,31 +39,31 @@ export default class Reducer {
 
     return state;
   }
-  editTodo(prevState, newState) {
+  editTodo(prevState, nextState) {
     return {...prevState,
       todos: prevState.todos.map((todo) => {
         return {...todo,
-          editing: newState.id === todo.id ? true : false
+          editing: nextState.id === todo.id ? true : false
         };
       })
     };
   }
-  updateTodo(prevState, newState) {
+  updateTodo(prevState, nextState) {
     return {...prevState,
       todos: prevState.todos.map((todo) => {
-        const matchedTodo = newState.id === todo.id;
+        const matchedTodo = nextState.id === todo.id;
         return {...todo,
-          text: matchedTodo ? newState.text : todo.text,
+          text: matchedTodo ? nextState.text : todo.text,
           editing: false
         };
       })
     };
   }
-  destroyTodo(prevState, newState) {
+  destroyTodo(prevState, nextState) {
     const todos = [];
 
     prevState.todos.forEach((todo) => {
-      if (newState.id !== todo.id) {
+      if (nextState.id !== todo.id) {
         todos.push({...todo});
       }
     });
@@ -82,14 +85,51 @@ export default class Reducer {
       todos: todos
     };
   }
-  markAllTodoAsCompleted(prevState, newState) {
+  markAllTodoAsCompleted(prevState, nextState) {
     return {...prevState,
-      toggleAll: newState.checked,
+      toggleAll: nextState.checked,
       todos: prevState.todos.map((todo) => {
         return {...todo,
-          completed: newState.checked
+          completed: nextState.checked
         };
       })
+    };
+  }
+  visibilityFilter(prevState, nextState) {
+    let todos = {};
+    const push = nextState.browserHistoryPush || true;
+
+    if (push) {
+      browserHistory.push(`/${nextState.filter === 'all' ? '' : nextState.filter}`);
+    }
+
+    switch (nextState.filter) {
+    case 'all':
+      todos = prevState.todos.map((todo) => {
+        return {...todo,
+          visible: true
+        };
+      });
+      break;
+    case 'active':
+      todos = prevState.todos.map((todo) => {
+        return {...todo,
+          visible: todo.completed ? false : true
+        };
+      });
+      break;
+    case 'completed':
+      todos = prevState.todos.map((todo) => {
+        return {...todo,
+          visible: todo.completed ? true : false
+        };
+      });
+      break;
+    }
+
+    return {...prevState,
+        activeVisibilityFilter: nextState.filter,
+        todos: todos
     };
   }
 }

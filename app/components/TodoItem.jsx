@@ -54,9 +54,10 @@ export default class TodoItem extends Component {
   render() {
     const liClass = cx({
       'editing': this.props.editing,
-      'completed': this.props.completed
+      'completed': this.props.completed,
+      'hidden': !this.props.visible
     });
-    return (<li  className={liClass}>
+    return (<li className={liClass}>
         <div className={cx('view')}>
           <input className={cx('toggle')} type="checkbox" onClick={this.onTodoToggle} checked={this.props.completed} />
           <label onDoubleClick={this.onEditTodo}>{this.props.text}</label>
@@ -73,5 +74,6 @@ TodoItem.propTypes = {
   completed: PropTypes.bool.isRequired,
   checked: PropTypes.bool,
   editing: PropTypes.bool,
-  text: PropTypes.string
+  text: PropTypes.string,
+  visible: PropTypes.bool.isRequired
 };
